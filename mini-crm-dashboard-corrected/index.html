@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Mini CRM Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<section class="crm-page">
+<section class="crm-header">
+<h1 class="crm-title">Mini CRM Dashboard</h1>
+<p class="crm-subtitle">Kunden verwalten, filtern und ansehen</p>
+</section>
+<section id="app" class="crm-app-root">
+<section class="crm-toolbar">
+<input
+class="crm-search-input"
+type="text"
+placeholder="Nach Namen oder Firma suchen"
+v-model="searchQuery"
+/>
+<button
+class="crm-primary-button"
+type="button"
+@click="openCreateForm"
+>
+Neuer Kunde
+</button>
+<button
+class="crm-secondary-button"
+type="button"
+@click="reloadCustomers"
+>
+Neu laden
+</button>
+</section>
+<section class="crm-main-layout">
+<section class="crm-table-panel">
+<section class="crm-table-header">
+<span class="crm-table-caption">Kundenliste</span>
+<span class="crm-table-count">{{ filteredCustomers.length }} Einträge</span>
+</section>
+<section class="crm-table-wrapper">
+<table class="crm-table">
+<thead>
+<tr>
+<th class="crm-th">Name</th>
+<th class="crm-th">Firma</th>
+<th class="crm-th">E-Mail</th>
+<th class="crm-th">Telefon</th>
+</tr>
+</thead>
+<tbody>
+<tr
+class="crm-tr"
+v-for="customer in filteredCustomers"
+:key="customer.id"
+@click="selectCustomer(customer)"
+:class="{'crm-tr-active': selectedCustomer && selectedCustomer.id === customer.id}"
+>
+<td class="crm-td">{{ customer.name }}</td>
+<td class="crm-td">{{ customer.companyName }}</td>
+<td class="crm-td">{{ customer.email }}</td>
+<td class="crm-td">{{ customer.phone }}</td>
+</tr>
+<tr v-if="filteredCustomers.length === 0">
+<td class="crm-td-empty" colspan="4">Keine Einträge gefunden</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section class="crm-detail-panel">
+<section v-if="mode === 'detail' && selectedCustomer" class="crm-detail-card">
+<h2 class="crm-detail-title">{{ selectedCustomer.name }}</h2>
+<p class="crm-detail-line"><span class="crm-label">Firma:</span> {{ selectedCustomer.companyName }}</p>
+<p class="crm-detail-line"><span class="crm-label">E-Mail:</span> {{ selectedCustomer.email }}</p>
+<p class="crm-detail-line"><span class="crm-label">Telefon:</span> {{ selectedCustomer.phone }}</p>
+<p class="crm-detail-line"><span class="crm-label">Stadt:</span> {{ selectedCustomer.city }}</p>
+<p class="crm-detail-line"><span class="crm-label">Website:</span> {{ selectedCustomer.website }}</p>
+<section class="crm-detail-actions">
+<button
+class="crm-primary-button"
+type="button"
+@click="openEditForm"
+>
+Bearbeiten
+</button>
+<button
+class="crm-danger-button"
+type="button"
+@click="deleteCustomer"
+>
+Löschen
+</button>
+</section>
+</section>
+<section v-else-if="mode === 'form'" class="crm-form-card">
+<h2 class="crm-form-title">{{ formModeTitle }}</h2>
+<form class="crm-form" @submit.prevent="submitForm">
+<label class="crm-form-field">
+<span class="crm-label">Name</span>
+<input
+class="crm-input"
+type="text"
+v-model="form.name"
+required
+/>
+</label>
+<label class="crm-form-field">
+<span class="crm-label">Firma</span>
+<input
+class="crm-input"
+type="text"
+v-model="form.companyName"
+required
+/>
+</label>
+<label class="crm-form-field">
+<span class="crm-label">E-Mail</span>
+<input
+class="crm-input"
+type="email"
+v-model="form.email"
+required
+/>
+</label>
+<label class="crm-form-field">
+<span class="crm-label">Telefon</span>
+<input
+class="crm-input"
+type="tel"
+v-model="form.phone"
+/>
+</label>
+<label class="crm-form-field">
+<span class="crm-label">Stadt</span>
+<input
+class="crm-input"
+type="text"
+v-model="form.city"
+/>
+</label>
+<label class="crm-form-field">
+<span class="crm-label">Website</span>
+<input
+class="crm-input"
+type="url"
+v-model="form.website"
+/>
+</label>
+<section class="crm-form-actions">
+<button
+class="crm-primary-button"
+type="submit"
+>
+Speichern
+</button>
+<button
+class="crm-secondary-button"
+type="button"
+@click="cancelForm"
+>
+Abbrechen
+</button>
+</section>
+</form>
+</section>
+<section v-else class="crm-placeholder-card">
+<p class="crm-placeholder-text">Bitte einen Kunden auswählen oder einen neuen Kunden anlegen.</p>
+</section>
+</section>
+</section>
+</section>
+<section class="crm-footer">
+<p class="crm-footer-text">Demo-Projekt Mini CRM mit Vue.js, REST und Cypress</p>
+</section>
+</section>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="src/api-mock.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
